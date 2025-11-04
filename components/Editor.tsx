@@ -60,8 +60,9 @@ const Editor: React.FC<EditorProps> = ({ image, setImageFile, onBack }) => {
       setImageFile({ ...image, history: newHistory });
       setHistoryIndex(newHistory.length - 1);
     } catch (e) {
-      console.error(e);
-      setError('Failed to apply edit. Please try again.');
+      console.error("Edit failed:", e);
+      const message = e instanceof Error ? e.message : "An unknown error occurred. See console for details.";
+      setError(`Edit failed: ${message}`);
     } finally {
       setIsLoading(false);
     }

@@ -37,6 +37,8 @@ const getGenerativePart = async (imageSource: File | string) => {
 };
 
 export const editImageWithGemini = async (imageSource: File | string, prompt: string): Promise<string> => {
+  // The API key is expected to be available in process.env.API_KEY in the execution environment.
+  // The GoogleGenAI constructor will handle it automatically.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const imagePart = await getGenerativePart(imageSource);
