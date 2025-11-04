@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageUploader from './components/ImageUploader';
 import Editor from './components/Editor';
 import { ImageFile } from './types';
@@ -62,6 +61,13 @@ const ThumbnailGallery: React.FC<{
 const App: React.FC = () => {
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const [isApiKeyMissing, setIsApiKeyMissing] = useState(false);
+
+  useEffect(() => {
+    if (!process.env.API_KEY) {
+      setIsApiKeyMissing(true);
+    }
+  }, []);
 
   const handleUpload = async (files: FileList) => {
     const newImageFilesPromises = Array.from(files).map(async (file) => {
@@ -116,11 +122,17 @@ const App: React.FC = () => {
         </div>
       </header>
       
-      <main className="flex-grow flex flex-col items-center justify-center w-full">
-        {selectedImage ? (
+      <main className="flex-grow flex flex-col items-center justify-center w-full p-4">
+        {isApiKeyMissing ? (
+            <div className="bg-red-900/50 border border-red-500 text-red-300 p-8 rounded-lg max-w-2xl text-center">
+                <h2 className="text-2xl font-bold mb-2">Configuration Error</h2>
+                <p>The API Key is missing from the environment settings. This application cannot connect to the AI service without it.</p>
+                <p className="mt-4">Please ensure the API key is set up correctly in the platform's secret or environment variable settings and then refresh the page.</p>
+            </div>
+        ) : selectedImage ? (
           <Editor image={selectedImage} setImageFile={handleUpdateImage} onBack={handleBack} />
         ) : (
-          <div className="w-full max-w-4xl mx-auto text-center p-4">
+          <div className="w-full max-w-4xl mx-auto text-center">
             <ImageUploader onUpload={handleUpload} />
             {imageFiles.length > 0 && (
                 <ThumbnailGallery 
